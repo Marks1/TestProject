@@ -27,22 +27,23 @@ namespace DDEITestProject.Steps
             string Browser = Utils.ReadAppSettings("Browser");
 
 
-            if (Browser.CompareTo("IE") == 0)
-            {
-                driver = new FirefoxDriver();
-            }
-            else if (Browser.CompareTo("Chrome") == 0)
-            {
-                driver = new FirefoxDriver();
-            }
-            else
-            {
-                DesiredCapabilities capability = DesiredCapabilities.Firefox();
-                driver = new RemoteWebDriver(new Uri("http://127.0.0.1:4444/wd/hub"), capability);
-                //Remove all cookie before testing
-                driver.Manage().Cookies.DeleteAllCookies();
+            DesiredCapabilities capability = new DesiredCapabilities();
+
+            //Here the test envrionment parameters can be read from app.conf to implement data driven test
+            capability.SetCapability(CapabilityType.BrowserName, Browser);
+            capability.SetCapability(CapabilityType.Version, "33.0");
+            capability.SetCapability(CapabilityType.Platform, "WINDOWS");
+
+            Proxy proxy = new Proxy();
+            //proxy.HttpProxy = "1.1.1.1:8080";
+            proxy.IsAutoDetect = true;
+            capability.SetCapability(CapabilityType.Proxy, proxy);
+
+            driver = new RemoteWebDriver(new Uri("http://10.145.18.75:4444/wd/hub"), capability);
+            //Remove all cookie before testing
+            driver.Manage().Cookies.DeleteAllCookies();
                 
-            }
+            
             //maximum the window
             driver.Manage().Window.Maximize();
             
